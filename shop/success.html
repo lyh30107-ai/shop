@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결제 결과 - BASIC STREET</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;color:#111}
+.wrap{max-width:720px;margin:0 auto;padding:40px 16px;text-align:center}
+h1{font-size:22px;margin:0 0 12px}
+p{color:#555;margin:6px 0}
+a{display:inline-block;margin-top:24px;padding:12px 20px;border-radius:6px;background:#111;color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="title">결제 승인 중...</h1>
+  <p id="desc"></p>
+  <a href="index.html">쇼핑 계속하기</a>
+</div>
+
+<script>
+(async () => {
+  const titleEl = document.getElementById('title');
+  const descEl = document.getElementById('desc');
+  const params = new URLSearchParams(location.search);
+  const paymentKey = params.get('paymentKey');
+  const orderId = params.get('orderId');
+  const amount = Number(params.get('amount'));
+
+  const expected = JSON.parse(sessionStorage.getItem('checkout') || 'null');
+  if (!paymentKey || !orderId || !amount) {
+    titleEl.textContent = '잘못된 접근입니다.';
+    return;
+  }
+  if (expected && expected.amount !== amount) {
+    titleEl.textContent = '결제 금액이 일치하지 않습니다.';
+    descEl.textContent = '결제를 승인하지 않았습니다. 고객센터에 문의해주세요.';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/payments/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentKey, orderId, amount }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      titleEl.textContent = '결제 승인에 실패했습니다.';
+      descEl.textContent = `${data.code || ''} ${data.message || ''}`.trim();
+      return;
+    }
+    titleEl.textContent = '결제가 완료되었습니다.';
+    descEl.textContent = `주문번호 ${orderId} · ${amount.toLocaleString('ko-KR')}원`;
+    sessionStorage.removeItem('checkout');
+  } catch (error) {
+    titleEl.textContent = '결제 승인 중 오류가 발생했습니다.';
+    descEl.textContent = error.message;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>결제 실패 - BASIC STREET</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;color:#111}
+.wrap{max-width:720px;margin:0 auto;padding:40px 16px;text-align:center}
+h1{font-size:22px;margin:0 0 12px}
+p{color:#555;margin:6px 0}
+a{display:inline-block;margin-top:24px;padding:12px 20px;border-radius:6px;background:#111;color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>결제에 실패했습니다.</h1>
+  <p id="message"></p>
+  <a href="checkout.html">다시 결제하기</a>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const code = params.get('code');
+const message = params.get('message');
+document.getElementById('message').textContent =
+  code === 'PAY_PROCESS_CANCELED' ? '결제를 취소하셨습니다.' : (message || '잠시 후 다시 시도해주세요.');
+</script>
+</body>
+</html>

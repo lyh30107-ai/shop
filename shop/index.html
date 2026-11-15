@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASIC STREET</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Malgun Gothic",sans-serif;color:#111}
+header{position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;z-index:5}
+.bar,main{max-width:1100px;margin:0 auto;padding:12px 16px}
+.bar{display:flex;gap:10px;align-items:center}
+.logo{font-weight:800;letter-spacing:1px;margin-right:auto}
+input,select{padding:8px;border:1px solid #ccc;border-radius:6px;font:inherit;background:#fff}
+#search{width:200px;max-width:40vw}
+button{font:inherit;font-size:14px;padding:8px 14px;border-radius:6px;border:1px solid #111;background:#111;color:#fff;cursor:pointer}
+button.ghost{background:#fff;color:#111}
+button:disabled{opacity:.35;cursor:not-allowed}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px}
+.card{cursor:pointer}
+.thumb{position:relative;aspect-ratio:3/4;background:#f1f1f1;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#888;font-size:13px}
+.badge{position:absolute;top:8px;left:8px;background:#111;color:#fff;font-size:11px;padding:3px 6px;border-radius:4px}
+.heart{position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:50%;background:#fff;color:#111;border-color:#ddd;font-size:16px}
+.card h3{font-size:14px;font-weight:600;margin:8px 0 2px}
+.price{font-size:14px}
+.empty{color:#777;text-align:center;padding:40px 0}
+dialog{border:none;border-radius:12px;padding:24px;width:min(480px,92vw)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog form{margin-top:16px}
+dialog h2{margin:0 0 8px}
+.label{font-size:13px;color:#555;margin:14px 0 6px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{background:#fff;color:#111;border-color:#ccc}
+.opt.on{background:#111;color:#fff;border-color:#111}
+.opt:disabled{text-decoration:line-through}
+.stock{font-size:13px;color:#555;margin:12px 0}
+.actions{display:flex;gap:8px;margin-top:16px}
+.actions button{flex:1}
+.row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{padding:2px 8px}
+#sum{text-align:right;font-size:14px;margin-top:12px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:6px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.show{opacity:1}
+@media(max-width:480px){.logo{font-size:15px}#search{width:120px}.row{grid-template-columns:1fr auto}}
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="logo">BASIC STREET</div>
+    <input id="search" type="search" placeholder="상품 검색">
+    <button id="cartBtn" class="ghost" type="button">장바구니 <span id="cartCount">0</span></button>
+  </div>
+</header>
+
+<main>
+  <div class="filters">
+    <select data-key="category">
+      <option value="">전체 카테고리</option>
+      <option>상의</option><option>아우터</option><option>하의</option>
+    </select>
+    <select data-key="size">
+      <option value="">전체 사이즈</option>
+      <option>S</option><option>M</option><option>L</option><option>XL</option>
+    </select>
+    <select data-key="color"><option value="">전체 색상</option></select>
+    <select data-key="maxPrice">
+      <option value="">전체 가격</option>
+      <option value="30000">3만원 이하</option>
+      <option value="50000">5만원 이하</option>
+      <option value="70000">7만원 이하</option>
+    </select>
+    <select data-key="sort">
+      <option value="new">신상품순</option>
+      <option value="low">낮은 가격순</option>
+      <option value="high">높은 가격순</option>
+    </select>
+  </div>
+  <div id="grid" class="grid"></div>
+</main>
+
+<div id="toast"></div>
+
+<dialog id="dlg">
+  <div id="detail"></div>
+  <form method="dialog"><button class="ghost">닫기</button></form>
+</dialog>
+
+<dialog id="cartDlg">
+  <h2>장바구니</h2>
+  <div id="cartList"></div>
+  <p id="sum"></p>
+  <div class="actions"><button id="checkoutBtn" type="button">주문하기</button></div>
+  <form method="dialog"><button class="ghost">닫기</button></form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>
